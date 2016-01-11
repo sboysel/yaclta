@@ -28,9 +28,9 @@ before_script:
   - Rscript -e 'update.packages(ask = FALSE, instlib = "~/Rlib")'
   - Rscript -e 'devtools::install_deps(pkg = ".", dependencies = TRUE)'
 script:
-  - Rscript -e "shinyapps::setAccountInfo(name='sboysel', token='FC30770A1477096766683E51D133026C',
-    secret=Sys.getenv('SHINYAPPS_SECRET'))"
-  - Rscript -e "shinyapps::deployApp(appName = 'yaclta')"
+  - Rscript -e 'shinyapps::setAccountInfo(name="sboysel", token="FC30770A1477096766683E51D133026C",
+    secret=Sys.getenv("SHINYAPPS_SECRET"))'
+  - Rscript -e 'shinyapps::deployApp(appName = "yaclta")'
 notifications:
   email:
     on_success: change
