@@ -1,0 +1,41 @@
+language: c
+sudo: false
+env:
+  global:
+    secure: OqkdHsgGHrNhAuBC4iY+pxjAnmbyz/PA3vexHkPzvzQ32NLadoaqmT51hhM4aNBgV7yUnp5R2dJQpE6fwLaP06JZwHoEZuaLqPZ5gvGezwIgQyi1sFIz3INH4LvqNNNibY8pZpDXWpcTcWCmWXNTUzt7EHQKBN4WFKyB2/IfCVjySqamfahu0GQzLe8kw6q/AzChNtADXvG2okAzZTum1v1Dn2TuQyFPzK1XF3CkVukxkm+xwVrTbH3W5Q1kQ1yFDyNQolRxs8NWT/Z1Jc7n1/bZ1qIb4juVkTR+lXvqIuge3P94VEFEw+zhBJdXPacJP8B9jNg7dwEUs20MvdKlLvfLGdp9bZ41y79hCvcgvu/LWHUSBrZjj4unnnvWIa48CnpBSVykgVVgYSTWEJ790ASNgY+CqKcvVRx5fY4jz3NbFcwnBfDeIiGbmgcFW76hlzGfwX3VLYJ8XHpwTMyalm75JRL64PyNKjtgN26KvUcOf1KzcgvpYCuMFO1uIDsW592NSupeDH33WWQgiR5wDuoczJRTm0RLraQ4LX9XX+CpmWn1KioNK7bvCce6x0YJWOtP4V6sSVnDztLjOO1kSMKe28oU6LN5EJuZXCWq+l9zeB5jRbRaMVi+5JnrDEaeB2c+sFncAdyPdVH8qxxT+gFAkeX6AY6pg+/kt8/ITMM=
+branches:
+  only:
+  - master
+addons:
+  apt:
+    sources:
+    - r-packages-precise
+    packages:
+    - r-base-dev
+    - r-recommended
+cache:
+  directories:
+  - "~/Rlib"
+before_script:
+  - mkdir -p ~/Rlib
+  - echo 'R_LIBS=~/Rlib' > .Renviron
+  - echo 'options(repos = "http://cran.rstudio.com")' > .Rprofile
+  - echo '.travis.yml' > .Rbuildignore
+  - Rscript -e 'sapply(c("devtools", "httpuv", "shiny"), function(x) {
+        if (!(x %in% rownames(installed.packages()))) {
+          install.packages(x, dependencies = TRUE)
+        }})'
+  - Rscript -e 'if (!("shinyapps" %in% rownames(installed.packages()))) {
+          devtools::install_github(repo = "rstudio/shinyapps", dependencies = TRUE)
+        }'
+  - Rscript -e 'update.packages(ask = FALSE, instlib = "~/Rlib")'
+  - Rscript -e 'devtools::install_deps(pkg = ".", dependencies = TRUE)'
+script:
+  - Rscript -e "shinyapps::setAccountInfo(name='sboysel',
+                                          token='FC30770A1477096766683E51D133026C',
+                                          secret=Sys.getenv('SHINYAPPS_SECRET'))"
+  - Rscript -e "shinyapps::deployApp(appName = 'yaclta')"
+notifications:
+  email:
+    on_success: change
+    on_failure: change

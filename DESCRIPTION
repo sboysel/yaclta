@@ -1,0 +1,7 @@
+Title: Yet Another Central Limit Theorem App
+Author: Sam Boysel
+Type: Shiny
+Tags: central-limit-theorem
+Imports:
+  ggplot2,
+  shinydashboard
